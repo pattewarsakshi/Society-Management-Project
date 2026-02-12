@@ -1,0 +1,20 @@
+/* TOP BAR TITLE */
+.guard-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;        /* dark text */
+  margin: 0;
+  text-decoration: none;
+}
+
+/* prevent link-like behavior */
+.guard-title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* optional: smoother look */
+.guard-topbar h4::selection {
+  background: #e0e7ff;
+  color: #0f172a;
+}
