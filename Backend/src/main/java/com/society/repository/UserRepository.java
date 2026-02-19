@@ -6,27 +6,28 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-import com.society.entity.Society;
 import com.society.entity.User;
 import com.society.entityenum.Role;
+import com.society.entityenum.AccountStatus;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
 
-    // Used in login
+    // ================= LOGIN =================
     Optional<User> findByEmail(String email);
 
-    // Used in registration 
+    // ================= REGISTRATION =================
     boolean existsByEmail(String email);
-    
+
+    // ================= RESIDENTS =================
     @Query("""
-    	    SELECT u
-    	    FROM User u
-    	    JOIN u.flat f
-    	    WHERE u.society.societyId = :societyId
-    	      AND u.role = com.society.entityenum.Role.RESIDENT
-    	""")
-    	List<User> findResidentsBySocietyId(Integer societyId);
-    
+        SELECT u
+        FROM User u
+        JOIN u.flat f
+        WHERE u.society.societyId = :societyId
+          AND u.role = com.society.entityenum.Role.RESIDENT
+    """)
+    List<User> findResidentsBySocietyId(Integer societyId);
+
     List<User> findByRoleAndFlatIsNullAndSociety_SocietyId(
             Role role,
             Integer societyId
@@ -37,6 +38,19 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             Integer societyId
     );
 
-	Optional<User> findByResetToken(String token);
+    // ================= GUARD APPROVAL =================
+    List<User> findByRoleAndAccountStatusAndSociety_SocietyId(
+            Role role,
+            AccountStatus accountStatus,
+            Integer societyId
+    );
 
+    Integer countByRoleAndAccountStatusAndSociety_SocietyId(
+            Role role,
+            AccountStatus accountStatus,
+            Integer societyId
+    );
+
+    // ================= PASSWORD RESET =================
+    Optional<User> findByResetToken(String token);
 }

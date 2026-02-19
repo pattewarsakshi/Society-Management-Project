@@ -14,7 +14,7 @@ import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
-    // Overlap check for same facility, date and time slot
+    //  Overlap check for same facility, date and time slot
     @Query("""
         SELECT b FROM Booking b
         WHERE b.facility = :facility
@@ -28,7 +28,7 @@ public interface BookingRepository extends JpaRepository<Booking, Integer> {
             @Param("start") LocalTime start,
             @Param("end") LocalTime end);
 
-    // Fetch bookings of a particular user
+    //  Fetch bookings of a particular user
     List<Booking> findByUser_UserId(Integer userId);
 
 	int countByUser_UserIdAndStatus(Integer userId, BookingStatus approved);

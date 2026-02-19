@@ -8,6 +8,7 @@ import com.society.dto.GuardRegisterDTO;
 import com.society.entity.Society;
 import com.society.entity.User;
 import com.society.entityenum.Role;
+import com.society.entityenum.AccountStatus; // 🔥 ADDED
 import com.society.exception.ResourceNotFoundException;
 import com.society.repository.SocietyRepository;
 import com.society.repository.UserRepository;
@@ -49,6 +50,9 @@ public class GuardServiceImpl implements GuardService {
         guard.setPassword(passwordEncoder.encode(dto.getPassword()));
         guard.setRole(Role.GUARD);
         guard.setSociety(society);
+
+        //  ADDED: Guard needs admin approval before becoming active
+        guard.setAccountStatus(AccountStatus.PENDING);
 
         return userRepo.save(guard);
     }

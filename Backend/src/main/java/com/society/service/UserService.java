@@ -9,10 +9,10 @@ import jakarta.servlet.http.HttpSession;
 
 public interface UserService {
 
-    // Register user (Admin or Self)
+    // 🔹 Register user (Admin or Self)
     User registerUser(RegisterRequestDTO dto);
 
-    // Login user
+    // 🔹 Login user
     LoginResponseDTO loginUser(LoginRequestDTO request, HttpSession session);
     
     // To get User by UserId

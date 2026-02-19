@@ -19,7 +19,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-
+/* ========= JACKSON ========= */
+//import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.society.entityenum.BookingStatus;
 
 /* ========= JAVA ========= */

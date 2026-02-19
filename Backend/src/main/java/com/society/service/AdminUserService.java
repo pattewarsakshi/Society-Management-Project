@@ -10,6 +10,7 @@ import com.society.entity.Flat;
 import com.society.entity.User;
 import com.society.entityenum.FlatStatus;
 import com.society.entityenum.Role;
+import com.society.entityenum.AccountStatus;
 import com.society.repository.FlatRepository;
 import com.society.repository.UserRepository;
 
@@ -22,15 +23,31 @@ public class AdminUserService {
     private final UserRepository userRepository;
     private final FlatRepository flatRepository;
 
-    // dashboard count
+    // ============================================================
+    // DASHBOARD COUNT (Resident + Guard)
+    // ============================================================
     public Integer getPendingApprovalCount(Integer societyId) {
-        return userRepository.countByRoleAndFlatIsNullAndSociety_SocietyId(
-                Role.RESIDENT,
-                societyId
-        );
+
+        Integer residentCount =
+                userRepository.countByRoleAndFlatIsNullAndSociety_SocietyId(
+                        Role.RESIDENT,
+                        societyId
+                );
+
+        Integer guardCount =
+                userRepository.countByRoleAndAccountStatusAndSociety_SocietyId(
+                        Role.GUARD,
+                        AccountStatus.PENDING,
+                        societyId
+                );
+
+        return residentCount + guardCount;
     }
 
-    //  list for approve users page
+    // ============================================================
+    // RESIDENT APPROVAL
+    // ============================================================
+
     public List<PendingApprovalUserDTO> getPendingUsers(Integer societyId) {
 
         return userRepository
@@ -51,7 +68,6 @@ public class AdminUserService {
                 .toList();
     }
 
-    //  approve user
     public void approveUser(ApproveUserRequestDTO dto) {
 
         User user = userRepository.findById(dto.getUserId())
@@ -66,5 +82,53 @@ public class AdminUserService {
         flat.setStatus(FlatStatus.OCCUPIED);
         flatRepository.save(flat);
     }
-}
 
+    // ============================================================
+    // GUARD APPROVAL FLOW
+    // ============================================================
+
+    public List<User> getPendingGuards(Integer societyId) {
+        return userRepository
+                .findByRoleAndAccountStatusAndSociety_SocietyId(
+                        Role.GUARD,
+                        AccountStatus.PENDING,
+                        societyId
+                );
+    }
+
+    // 🔥 MISSING METHOD ADDED
+    public Integer getPendingGuardCount(Integer societyId) {
+        return userRepository
+                .countByRoleAndAccountStatusAndSociety_SocietyId(
+                        Role.GUARD,
+                        AccountStatus.PENDING,
+                        societyId
+                );
+    }
+
+    public void approveGuard(Integer guardId) {
+
+        User guard = userRepository.findById(guardId)
+                .orElseThrow(() -> new RuntimeException("Guard not found"));
+
+        if (guard.getRole() != Role.GUARD) {
+            throw new RuntimeException("User is not a guard");
+        }
+
+        guard.setAccountStatus(AccountStatus.ACTIVE);
+        userRepository.save(guard);
+    }
+
+    public void rejectGuard(Integer guardId) {
+
+        User guard = userRepository.findById(guardId)
+                .orElseThrow(() -> new RuntimeException("Guard not found"));
+
+        if (guard.getRole() != Role.GUARD) {
+            throw new RuntimeException("User is not a guard");
+        }
+
+        guard.setAccountStatus(AccountStatus.REJECTED);
+        userRepository.save(guard);
+    }
+}

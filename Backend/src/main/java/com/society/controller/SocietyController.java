@@ -18,21 +18,21 @@ public class SocietyController {
 
     private final SocietyService societyService;
 
-    //  Create Society
+    // 1️⃣ Create Society
     @PostMapping
     public ResponseEntity<Society> createSociety(@RequestBody Society society) {
         Society savedSociety = societyService.createSociety(society);
         return new ResponseEntity<>(savedSociety, HttpStatus.CREATED);
     }
 
-    // Get Society by ID (used internally during registration)
+    // 2️⃣ Get Society by ID (used internally during registration)
     @GetMapping("/{societyId}")
     public ResponseEntity<Society> getSocietyById(@PathVariable Integer societyId) {
         Society society = societyService.getSocietyById(societyId);
         return ResponseEntity.ok(society);
     }
     
-	 // GET all societies
+	 // ✅ GET all societies
 	    @GetMapping
 	    public ResponseEntity<List<Society>> getAllSocieties() {
 	        List<Society> societies = societyService.getAllSocieties();

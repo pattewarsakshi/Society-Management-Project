@@ -17,7 +17,7 @@ public class GuardController {
 
     private final GuardService guardService;
 
-    // ✅ REGISTER GUARD (ADMIN ONLY)
+    //  REGISTER GUARD (ADMIN ONLY)
     @PostMapping("/register")
     public ResponseEntity<?> registerGuard(
             @RequestBody GuardRegisterDTO dto,
@@ -28,5 +28,5 @@ public class GuardController {
         );
     }
 
-    
+   
 }

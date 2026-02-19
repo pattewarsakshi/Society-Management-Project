@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.society.entityenum.Role;
+import com.society.entityenum.AccountStatus;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,7 +14,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User extends BaseEntity{
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +40,11 @@ public class User extends BaseEntity{
     @Column(nullable = false)
     private Role role;
 
+    //FIXED: Removed default ACTIVE initialization
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AccountStatus accountStatus;
+
     private LocalDate registrationDate;
 
     @ManyToOne
@@ -48,14 +54,12 @@ public class User extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "society_id", nullable = false)
     private Society society;
-    
-    // Required for forgot password
+
     @Column(name = "reset_token")
     private String resetToken;
 
     @Column(name = "token_expiry")
     private LocalDateTime tokenExpiry;
-
 
     @PrePersist
     public void setRegistrationDate() {

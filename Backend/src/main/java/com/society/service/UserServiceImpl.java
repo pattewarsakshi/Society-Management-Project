@@ -13,6 +13,7 @@ import com.society.dto.RegisterRequestDTO;
 import com.society.entity.Society;
 import com.society.entity.User;
 import com.society.entityenum.Role;
+import com.society.entityenum.AccountStatus;
 import com.society.repository.FlatRepository;
 import com.society.repository.SocietyRepository;
 import com.society.repository.UserRepository;
@@ -56,6 +57,14 @@ public class UserServiceImpl implements UserService {
         user.setRole(dto.getRole());
         user.setSociety(society);
 
+        // 🔥 Explicit lifecycle control
+        if (dto.getRole() == Role.GUARD) {
+            user.setAccountStatus(AccountStatus.PENDING);
+        } else {
+            // Resident / Owner
+            user.setAccountStatus(AccountStatus.ACTIVE);
+        }
+
         return userRepository.save(user);
     }
 
@@ -72,10 +81,17 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Invalid password");
         }
 
+        // 🔥 Resident approval logic (flat must be assigned)
         if (user.getRole() == Role.RESIDENT && user.getFlat() == null) {
             throw new RuntimeException(
                 "Your account is pending admin approval. Please wait until a flat is assigned."
             );
+        }
+
+        // 🔥 Guard approval logic (accountStatus must be ACTIVE)
+        if (user.getRole() == Role.GUARD &&
+            user.getAccountStatus() != AccountStatus.ACTIVE) {
+            throw new RuntimeException("Guard account not approved by admin");
         }
 
         session.setAttribute("LOGGED_USER_ID", user.getUserId());
@@ -93,7 +109,7 @@ public class UserServiceImpl implements UserService {
                 flatId,
                 user.getEmail(),
                 user.getPhone(),
-                user.getSociety().getSocietyName() // ✅ ADDED
+                user.getSociety().getSocietyName()
         );
     }
 
@@ -112,7 +128,7 @@ public class UserServiceImpl implements UserService {
                 user.getFlat() != null ? user.getFlat().getFlatId() : null,
                 user.getEmail(),
                 user.getPhone(),
-                user.getSociety().getSocietyName() // ✅ ADDED
+                user.getSociety().getSocietyName()
         );
     }
 
@@ -165,7 +181,6 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
-    // ================= SIMPLE HELPERS =================
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
     }

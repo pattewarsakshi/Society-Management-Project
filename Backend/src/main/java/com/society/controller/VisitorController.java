@@ -21,7 +21,7 @@ public class VisitorController {
     private final VisitorService visitorService;
     private final ObjectMapper objectMapper;
 
-    // ADD VISITOR (GUARD – society from session)
+    // ➕ ADD VISITOR (GUARD – society from session)
     @PostMapping("/add")
     public ResponseEntity<?> addVisitor(
             @RequestPart("data") String data,
@@ -36,7 +36,7 @@ public class VisitorController {
         );
     }
 
-    // INSIDE VISITORS
+    //  INSIDE VISITORS
     @GetMapping("/inside")
     public ResponseEntity<?> getInsideVisitors(HttpSession session) {
         return ResponseEntity.ok(
@@ -52,7 +52,7 @@ public class VisitorController {
         );
     }
 
-    //  ALL VISITORS
+    // ALL VISITORS
     @GetMapping
     public ResponseEntity<?> getAllVisitors(HttpSession session) {
         return ResponseEntity.ok(
@@ -60,7 +60,7 @@ public class VisitorController {
         );
     }
 
-    //  EXIT VISITOR
+    // EXIT VISITOR
     @PutMapping("/exit/{visitorId}")
     public ResponseEntity<?> exitVisitor(
             @PathVariable Integer visitorId,
@@ -71,7 +71,7 @@ public class VisitorController {
         );
         
     }
- //  ADMIN – ALL VISITORS
+ // ADMIN – ALL VISITORS
     @GetMapping("/admin/all")
     public ResponseEntity<?> adminAllVisitors(HttpSession session) {
         return ResponseEntity.ok(

@@ -13,6 +13,6 @@ public interface SocietyService {
 
 	List<Society> getAllSocieties();
 	
-    // NEW (public registration)
+    // ✅ NEW (public registration)
     void registerSocietyWithAdmin(SocietyRegistrationRequest request);
 }

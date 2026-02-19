@@ -9,6 +9,12 @@ import java.util.List;
 
 public interface FacilityRepository extends JpaRepository<Facility, Integer> {
 
-    // filter ACTIVE facilities
-    List<Facility> findByStatus(FacilityStatus status);
+    // Get all facilities of a society
+    List<Facility> findBySociety_SocietyId(Integer societyId);
+
+    // Get active facilities of a society
+    List<Facility> findBySociety_SocietyIdAndStatus(
+            Integer societyId,
+            FacilityStatus status
+    );
 }

@@ -14,7 +14,7 @@ public class ResidentParkingController {
 
     private final ParkingViewService parkingViewService;
 
-    //  Resident views parking details
+    // 🔹 Resident views parking details
     @GetMapping("/{flatId}")
     public ParkingDetailsResponseDTO getParkingDetails(
             @PathVariable Integer flatId) {

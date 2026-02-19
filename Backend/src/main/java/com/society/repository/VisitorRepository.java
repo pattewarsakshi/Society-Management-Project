@@ -24,4 +24,9 @@ public interface VisitorRepository extends JpaRepository<Visitor, Integer> {
             LocalDateTime start,
             LocalDateTime end
     );
+
+    Optional<Visitor> findByPhoneAndExitTimeIsNullAndSociety_SocietyId(
+            String phone,
+            Integer societyId
+    );
 }

@@ -3,6 +3,7 @@ package com.society.service;
 import com.society.dto.FacilityRequestDTO;
 import com.society.dto.FacilityResponseDTO;
 import com.society.entity.Facility;
+import com.society.entity.Society;
 import com.society.entity.User;
 import com.society.entityenum.FacilityStatus;
 import com.society.entityenum.Role;
@@ -10,7 +11,6 @@ import com.society.repository.FacilityRepository;
 import com.society.util.LoggedInUserUtil;
 
 import jakarta.servlet.http.HttpSession;
-
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -26,7 +26,9 @@ public class FacilityServiceImpl implements FacilityService {
     private final FacilityRepository facilityRepository;
     private final LoggedInUserUtil loggedInUserUtil;
 
-    // ADMIN only
+    // ================================
+    // ADD FACILITY (ADMIN ONLY)
+    // ================================
     @Override
     @Transactional
     public FacilityResponseDTO addFacility(
@@ -41,11 +43,18 @@ public class FacilityServiceImpl implements FacilityService {
         facility.setCapacity(dto.getCapacity());
         facility.setBookingRequired(dto.getBookingRequired());
         facility.setStatus(dto.getStatus());
+        facility.setAvailableFrom(dto.getAvailableFrom());
+        facility.setAvailableTo(dto.getAvailableTo());
+
+        //  IMPORTANT: Set society
+        facility.setSociety(user.getSociety());
 
         return map(facilityRepository.save(facility));
     }
 
-    // ADMIN only
+    // ================================
+    // UPDATE FACILITY (ADMIN ONLY)
+    // ================================
     @Override
     @Transactional
     public FacilityResponseDTO updateFacility(
@@ -59,14 +68,24 @@ public class FacilityServiceImpl implements FacilityService {
         Facility facility = facilityRepository.findById(facilityId)
                 .orElseThrow(() -> new RuntimeException("Facility not found"));
 
+        //  SECURITY: Prevent cross-society update
+        if (!facility.getSociety().getSocietyId()
+                .equals(user.getSociety().getSocietyId())) {
+            throw new RuntimeException("Unauthorized access to facility");
+        }
+
         facility.setCapacity(dto.getCapacity());
         facility.setBookingRequired(dto.getBookingRequired());
         facility.setStatus(dto.getStatus());
+        facility.setAvailableFrom(dto.getAvailableFrom());
+        facility.setAvailableTo(dto.getAvailableTo());
 
         return map(facilityRepository.save(facility));
     }
 
-    // ADMIN + MEMBER
+    // ================================
+    // GET ALL FACILITIES (ADMIN + MEMBER)
+    // ================================
     @Override
     @Transactional(readOnly = true)
     public List<FacilityResponseDTO> getAllFacilities(HttpSession session) {
@@ -74,13 +93,16 @@ public class FacilityServiceImpl implements FacilityService {
         User user = loggedInUserUtil.getUser(session);
         blockGuard(user);
 
-        return facilityRepository.findAll()
+        return facilityRepository
+                .findBySociety_SocietyId(user.getSociety().getSocietyId())
                 .stream()
                 .map(this::map)
                 .collect(Collectors.toList());
     }
 
-    // ONLY ACTIVE FACILITIES
+    // ================================
+    // GET ACTIVE FACILITIES ONLY
+    // ================================
     @Override
     @Transactional(readOnly = true)
     public List<FacilityResponseDTO> getActiveFacilities(HttpSession session) {
@@ -88,13 +110,19 @@ public class FacilityServiceImpl implements FacilityService {
         User user = loggedInUserUtil.getUser(session);
         blockGuard(user);
 
-        return facilityRepository.findByStatus(FacilityStatus.ACTIVE)
+        return facilityRepository
+                .findBySociety_SocietyIdAndStatus(
+                        user.getSociety().getSocietyId(),
+                        FacilityStatus.ACTIVE
+                )
                 .stream()
                 .map(this::map)
                 .collect(Collectors.toList());
     }
 
-    // helpers
+    // ================================
+    // HELPERS
+    // ================================
     private void checkAdmin(User user) {
         if (user.getRole() != Role.ADMIN) {
             throw new RuntimeException("Only admin allowed");

@@ -40,6 +40,7 @@ public class Visitor extends BaseEntity {
     @Column(nullable = true)
     private String vehicleNumber;
 
+    
     @Column(nullable = false)
     private Long flatId;
 

@@ -16,7 +16,7 @@ public class AdminVisitorParkingController {
 
     private final AdminVisitorParkingService service;
 
-    // CREATE VISITOR PARKING SLOT
+    // ➕ CREATE VISITOR PARKING SLOT
     @PostMapping("/society/{societyId}")
     public ResponseEntity<?> createVisitorParking(
             @PathVariable Integer societyId,

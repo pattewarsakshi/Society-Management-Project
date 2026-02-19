@@ -50,7 +50,7 @@ public class AuthController {
     public ResponseEntity<String> logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
-            session.invalidate(); // 🔴 THIS IS MANDATORY
+            session.invalidate(); 
         }
         return ResponseEntity.ok("Logged out successfully");
     }

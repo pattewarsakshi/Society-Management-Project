@@ -58,7 +58,7 @@ public class AdminUserController {
                 .body("User created with ID: " + user.getUserId());
     }
     
-    //  dashboard count
+    // 🔹 dashboard count
     @GetMapping("/pending/count")
     public Integer getPendingApprovalCount(
             @RequestParam Integer societyId
@@ -66,7 +66,7 @@ public class AdminUserController {
         return adminUserService.getPendingApprovalCount(societyId);
     }
 
-    //  approve users list
+    // 🔹 approve users list
     @GetMapping("/pending")
     public List<PendingApprovalUserDTO> getPendingUsers(
             @RequestParam Integer societyId
@@ -74,7 +74,7 @@ public class AdminUserController {
         return adminUserService.getPendingUsers(societyId);
     }
 
-    //  approve user
+    // 🔹 approve user
     @PostMapping("/approve")
     public String approveUser(
             @RequestBody ApproveUserRequestDTO dto

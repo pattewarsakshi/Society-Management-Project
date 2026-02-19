@@ -56,7 +56,7 @@ public class ComplaintController {
         return complaintService.getAllComplaintsForAdmin(session);
     }
     
-    //  Dashboard bucket
+    // 🔹 Dashboard bucket
     @GetMapping("/pending/count")
     public ComplaintCountDTO getPendingComplaintCount() {
         return new ComplaintCountDTO(
@@ -64,7 +64,7 @@ public class ComplaintController {
         );
     }
     
-    //  RESIDENT: Pending complaints count (session-based)
+    // 🔹 RESIDENT: Pending complaints count (session-based)
     @GetMapping("/my/pending/count")
     public ComplaintCountDTO getMyPendingComplaintCount(HttpSession session) {
         return new ComplaintCountDTO(
